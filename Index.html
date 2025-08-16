@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kalender Modern</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .calendar {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .calendar-header h2 {
+      font-size: 1.5rem;
+      color: #333;
+    }
+
+    .nav-buttons button {
+      background-color: #e0e0e0;
+      border: none;
+      border-radius: 8px;
+      padding: 0.3rem 0.6rem;
+      margin-left: 0.3rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .nav-buttons button:hover {
+      background-color: #d0d0d0;
+    }
+
+    .day-names, .days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.3rem;
+    }
+
+    .day-names div {
+      text-align: center;
+      font-weight: bold;
+      color: #666;
+    }
+
+    .days div {
+      text-align: center;
+      padding: 0.7rem 0;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+      cursor: pointer;
+    }
+
+    .days div:hover {
+      background-color: #f0f0f0;
+    }
+
+    .days .today {
+      background-color: #4f46e5;
+      color: white;
+      font-weight: bold;
+    }
+
+    .days .inactive {
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="calendar">
+    <div class="calendar-header">
+      <h2 id="monthYear">Agustus 2025</h2>
+      <div class="nav-buttons">
+        <button onclick="changeMonth(-1)">&#8592;</button>
+        <button onclick="changeMonth(1)">&#8594;</button>
+      </div>
+    </div>
+
+    <div class="day-names">
+      <div>Min</div>
+      <div>Sen</div>
+      <div>Sel</div>
+      <div>Rab</div>
+      <div>Kam</div>
+      <div>Jum</div>
+      <div>Sab</div>
+    </div>
+    <div class="days" id="calendarDays">
+      <!-- Hari akan diisi dengan JavaScript -->
+    </div>
+  </div>
+
+  <script>
+    const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                        "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+    let currentDate = new Date();
+
+    function renderCalendar() {
+      const daysContainer = document.getElementById("calendarDays");
+      const monthYear = document.getElementById("monthYear");
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      
+      const firstDay = new Date(year, month, 1).getDay();
+      const lastDate = new Date(year, month + 1, 0).getDate();
+      const prevLastDate = new Date(year, month, 0).getDate();
+
+      daysContainer.innerHTML = "";
+      monthYear.textContent = `${monthNames[month]} ${year}`;
+
+      // Days from previous month
+      for (let i = firstDay - 1; i >= 0; i--) {
+        const div = document.createElement("div");
+        div.classList.add("inactive");
+        div.textContent = prevLastDate - i;
+        daysContainer.appendChild(div);
+      }
+
+      // Current month days
+      for (let i = 1; i <= lastDate; i++) {
+        const div = document.createElement("div");
+        div.textContent = i;
+
+        const today = new Date();
+        if (
+          i === today.getDate() &&
+          month === today.getMonth() &&
+          year === today.getFullYear()
+        ) {
+          div.classList.add("today");
+        }
+
+        daysContainer.appendChild(div);
+      }
+
+      // Fill next month days to complete grid
+      const totalCells = firstDay + lastDate;
+      const nextDays = 7 - (totalCells % 7);
+      if (nextDays < 7) {
+        for (let i = 1; i <= nextDays; i++) {
+          const div = document.createElement("div");
+          div.classList.add("inactive");
+          div.textContent = i;
+          daysContainer.appendChild(div);
+        }
+      }
+    }
+
+    function changeMonth(delta) {
+      currentDate.setMonth(currentDate.getMonth() + delta);
+      renderCalendar();
+    }
+
+    renderCalendar();
+  </script>
+</body>
+</html>
